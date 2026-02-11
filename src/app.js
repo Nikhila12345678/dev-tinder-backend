@@ -1,28 +1,34 @@
 const express = require("express");
-
 const app = express();
-app.use("/",(err,req,res,next) => {
-    if(err){
-      res.status(500).send("something went1 wrong");
-    }
-});
+const {connectDB} = require("./config/database");
+const User = require("./models/user");
 
-
-app.get("/user",(req,res) => {
+app.post("/signup", async(req,res) => {
+    //creating new instance of user model
+    const user = new User({
+        firstName: "nikhila",
+        lastName: "kodigudla",
+        emailId: "nikhilakodigudla.com",
+        password: "123",
+        age: 20,
+    });
     try{
-    throw new Error("gfuwi");
-    res.send("user data");
+    await user.save();
+    res.send("user added successfully");
     }catch(err){
-        res.status(500).send("contact support team");
+        res.status(400).send("Error saving the user:" + err.message);
     }
 });
 
-app.use("/",(err,req,res,next) => {
-    if(err){
-      res.status(500).send("something went wrong");
-    }
-});
-
-app.listen(3000, () =>{
+connectDB()
+  .then(() => {
+    console.log("Database connection established");
+    app.listen(3000, () =>{
     console.log("server created successfully");
 });
+  })   
+  .catch((err) => {
+    console.log("Database cannot be connected");
+  });
+
+
