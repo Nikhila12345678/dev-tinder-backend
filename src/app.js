@@ -9,6 +9,7 @@ app.post("/signup", async(req,res) => {
     console.log(req.body);
     //creating new instance of user model
     const user = new User(req.body);
+    
     try{
     await user.save();
     res.send("user added successfully");
@@ -32,6 +33,7 @@ app.post("/signup", async(req,res) => {
   }
  });
 
+ //to get all users in database
 app.get("/feed",async (req,res) => {
   const users = await User.find({});
   try{
@@ -40,7 +42,36 @@ app.get("/feed",async (req,res) => {
   catch(err){
     res.send("something went wrong");
   }
-})
+});
+
+//delete user from database
+app.delete("/user",async (req,res) => {
+  const userId = req.body._id;
+  console.log(userId);
+  try{
+    const user = await User.deleteOne({_id: userId});
+    res.send("deleted successfully");
+  }
+  catch(err){
+    res.status(400).send("something went wrong");
+  }
+});
+
+//update data of user
+app.patch("/user",async (req,res) => {
+  const userId = req.body._id;
+  const data = req.body;
+  try{
+    await User.findByIdAndUpdate({_id:userId},data,{
+      returnDocument:"after",
+      runvaliadtors: true,
+    });
+    res.send("updated");
+  }
+  catch(err){
+    res.status(400).send("update failed" + err.message);
+  }
+});
 
 connectDB()
   .then(() => {
