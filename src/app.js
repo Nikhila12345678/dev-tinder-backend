@@ -2,21 +2,57 @@ const express = require("express");
 const app = express();
 const {connectDB} = require("./config/database");
 const User = require("./models/user");
+const {validateSignupdata} = require("/home/rgukt/Desktop/dev tinder backend/src/utils/validation.js");
+const bcrypt = require("bcryptjs");
 
 app.use(express.json());
 
 app.post("/signup", async(req,res) => {
+  try{
+  //validation of data
+  validateSignupdata(req);
+  const {firstName, lastName, emailId, password,photourl,skills} = req.body;
+  //Encrypt the password
+  const passwordhash =await bcrypt.hash(password,10);
+  console.log(passwordhash);
+
     console.log(req.body);
     //creating new instance of user model
-    const user = new User(req.body);
+    const user = new User({
+      firstName,lastName,password:passwordhash,emailId,photourl,skills
+    });
 
-    try{
     await user.save();
     res.send("user added successfully");
     }catch(err){
         res.status(400).send("Error saving the user:" + err.message);
     }
 });
+
+app.post("/login", async(req,res) => {
+  try{
+    const {emailId,password} = req.body;
+    
+    const user = await User.findOne({emailId: emailId});
+    if(!user){
+      throw new Error("Invalid credentials");
+    }
+    const isPasswordvalid = await bcrypt.compare(password,user.password);
+    console.log(password);
+    console.log(user.password);
+    console.log(isPasswordvalid);
+    if(isPasswordvalid){
+      res.send("Login Successful!!");
+    }
+    else{
+      throw new Error("Wrong password");
+    }
+  }
+  catch(err){
+    res.status(400).send("Error: " + err.message);
+  }
+}
+);
 
  //get user by email
  app.get("/user",async (req,res) => {

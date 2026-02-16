@@ -46,7 +46,7 @@ const userSchema = mongoose.Schema({
     },
     photourl: {
         type: String,
-        default: "https:heeloo",
+        //default: "https:heeloo",
         validate(value){
         if(!validator.isURL(value)){  //use npm validator.com
             throw new Error("Please give correct URL");
