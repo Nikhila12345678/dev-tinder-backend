@@ -9,7 +9,7 @@ app.post("/signup", async(req,res) => {
     console.log(req.body);
     //creating new instance of user model
     const user = new User(req.body);
-    
+
     try{
     await user.save();
     res.send("user added successfully");
@@ -61,11 +61,23 @@ app.delete("/user",async (req,res) => {
 app.patch("/user",async (req,res) => {
   const userId = req.body._id;
   const data = req.body;
+
   try{
-    await User.findByIdAndUpdate({_id:userId},data,{
+     const ALLOWED_UPDATES = ["photourl","about","gender","age"];
+  const isupdateAllowed = Object.keys(data).every((k) => 
+    ALLOWED_UPDATES.includes(k)
+);
+if(!isupdateAllowed){
+   throw new Error("update not allowed"); 
+}
+if(data.skills.length > 100){
+  throw new Error("please add correct skills");
+}
+   const user = await User.findByIdAndUpdate({_id:userId},data,{
       returnDocument:"after",
       runvaliadtors: true,
     });
+    console.log(user);
     res.send("updated");
   }
   catch(err){
