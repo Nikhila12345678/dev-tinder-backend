@@ -4,8 +4,13 @@ const {connectDB} = require("./config/database");
 const User = require("./models/user");
 const {validateSignupdata} = require("/home/rgukt/Desktop/dev tinder backend/src/utils/validation.js");
 const bcrypt = require("bcryptjs");
+const cookieparser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const {userAuth} = require("./middlewares/auth");
+
 
 app.use(express.json());
+app.use(cookieparser());
 
 app.post("/signup", async(req,res) => {
   try{
@@ -37,11 +42,16 @@ app.post("/login", async(req,res) => {
     if(!user){
       throw new Error("Invalid credentials");
     }
-    const isPasswordvalid = await bcrypt.compare(password,user.password);
+    const isPasswordvalid = await user.validatepassword(password);
     console.log(password);
     console.log(user.password);
     console.log(isPasswordvalid);
     if(isPasswordvalid){
+
+      //create a JWT token
+      const token = await user.getJWT();
+      //add the token to cookie and send the response back to user
+      res.cookie("token",token,{httpOnly:true});
       res.send("Login Successful!!");
     }
     else{
@@ -69,57 +79,22 @@ app.post("/login", async(req,res) => {
   }
  });
 
- //to get all users in database
-app.get("/feed",async (req,res) => {
-  const users = await User.find({});
-  try{
-    res.send(users);
+ app.get("/profile",userAuth,async (req,res) => {
+  try {
+  const user = req.user;
+  res.send(user);
   }
   catch(err){
-    res.send("something went wrong");
+    res.status(400).send("Error:" + err.message);
   }
-});
+ });
 
-//delete user from database
-app.delete("/user",async (req,res) => {
-  const userId = req.body._id;
-  console.log(userId);
-  try{
-    const user = await User.deleteOne({_id: userId});
-    res.send("deleted successfully");
-  }
-  catch(err){
-    res.status(400).send("something went wrong");
-  }
-});
-
-//update data of user
-app.patch("/user",async (req,res) => {
-  const userId = req.body._id;
-  const data = req.body;
-
-  try{
-     const ALLOWED_UPDATES = ["photourl","about","gender","age"];
-  const isupdateAllowed = Object.keys(data).every((k) => 
-    ALLOWED_UPDATES.includes(k)
-);
-if(!isupdateAllowed){
-   throw new Error("update not allowed"); 
-}
-if(data.skills.length > 100){
-  throw new Error("please add correct skills");
-}
-   const user = await User.findByIdAndUpdate({_id:userId},data,{
-      returnDocument:"after",
-      runvaliadtors: true,
-    });
-    console.log(user);
-    res.send("updated");
-  }
-  catch(err){
-    res.status(400).send("update failed" + err.message);
-  }
-});
+ app.post("/sendconnectionrequest", userAuth, async(req,res) => {
+  const user = req.user;
+  //sending connection request
+  console.log("sending a connection request");
+  res.send("Connection Request Sent!");
+ });
 
 connectDB()
   .then(() => {
