@@ -11,10 +11,10 @@
 -patch/patch/password
 
 ##connection request router
--post/request/send/intrested/:userId
--post/request/send/ignores/userId
--post/request/review/accepted/:requestId
--post/request/review/rejected/:requestId
+-post/request/send/status/:userId
+
+
+-post/request/review/status/:requestId
 
 ##user router
 get/user/connections
