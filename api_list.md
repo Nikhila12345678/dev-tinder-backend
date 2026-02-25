@@ -12,11 +12,9 @@
 
 ##connection request router
 -post/request/send/status/:userId
-
-
 -post/request/review/status/:requestId
 
 ##user router
+get/user/requests
 get/user/connections
-get/user/requests/received
 get/user/feed - gets you yhe profile of others on platform
