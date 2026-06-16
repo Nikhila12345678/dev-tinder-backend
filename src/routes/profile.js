@@ -25,6 +25,8 @@ const {validateEditProfiledata} = require("/home/rgukt/Desktop/dev tinder backen
         res.send(`${loggedInUser.firstName} your data is updated successfully`);
     }
     catch(err){
+        console.log("Status:", err.response?.status);
+        console.log("Data:", err.response?.data);
         res.status(400).send("Error :" + err.message);
     }
  });

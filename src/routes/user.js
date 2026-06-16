@@ -11,7 +11,7 @@ userRouter.get("/user/requests/received", userAuth, async(req,res) => {
         const connectionRequests = await ConnectionRequest.find({
             toUserId: loggedInUser._id,
             status: "intrested",
-        }).populate("fromUserId","firstName lastName");
+        }).populate("fromUserId","firstName lastName about photourl skills");
         //"fromUserId",["firstName", "lastName"]);
         res.json({
             message:"Requests Received",
@@ -32,11 +32,11 @@ userRouter.get("/user/connections", userAuth,async(req,res) => {
         {toUserId: loggedInUser._id, status: "accepted"},
         {fromUserId: loggedInUser._id, status: "accepted"},
      ]
-   }).populate("fromUserId", "firstName lastName")
-   .populate("toUserId", "firstName lastName");
+   }).populate("fromUserId", "firstName lastName photourl skills about")
+   .populate("toUserId", "firstName lastName photourl skills about");
 
    const data = connectionRequests.map((row) => {
-    if(row.fromUserId._id.toString() === loggedInUser._id){
+    if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
         console.log(row.toUserId);
         return row.toUserId;
     }
@@ -89,7 +89,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
                 {_id: {$nin: Array.from(hideUsersFromFeed)}},
                 {_id: {$ne: loggedInUser._id}},
             ]
-         }).select("_Id firstName")
+         }).select("_id firstName lastName photourl about skills")
          .skip(skip)
          .limit(limit);
 
