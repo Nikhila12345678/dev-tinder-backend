@@ -7,4 +7,3 @@ Tech Stack:
 - Express
 - Mongodb
 
-Status: Work in progress 🚧
