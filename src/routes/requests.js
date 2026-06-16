@@ -1,6 +1,6 @@
 const express = require('express');
 const requestRouter = express.Router();
-const {userAuth} = require("/home/rgukt/Desktop/dev tinder backend/src/middlewares/auth.js");
+const {userAuth} = require("../middlewares/auth.js");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 

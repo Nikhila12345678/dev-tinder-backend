@@ -1,7 +1,7 @@
 const express = require('express');
 const profileRouter = express.Router();
-const {userAuth} = require("/home/rgukt/Desktop/dev tinder backend/src/middlewares/auth.js");
-const {validateEditProfiledata} = require("/home/rgukt/Desktop/dev tinder backend/src/utils/validation.js");
+const {userAuth} = require("../middlewares/auth.js");
+const {validateEditProfiledata} = require("../utils/validation.js");
 
  profileRouter.get("/profile",userAuth,async (req,res) => {
   try {
