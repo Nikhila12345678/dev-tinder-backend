@@ -1,8 +1,8 @@
 const express = require("express");
 const userRouter = express.Router();
 const {userAuth} = require("../middlewares/auth");
-const ConnectionRequest = require("../models/connectionRequest.js");
-const User = require("../models/user.js");
+const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
 
 userRouter.get("/user/requests/received", userAuth, async(req,res) => {
     try{
