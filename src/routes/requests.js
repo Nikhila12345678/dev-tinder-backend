@@ -4,6 +4,7 @@ const {userAuth} = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
+const sendEmail = require("../utils/sendEmail");
 
  requestRouter.post("/send/:status/:toUserId", userAuth, async(req,res) => {
     try{
@@ -39,10 +40,17 @@ const User = require("../models/user");
             toUserId,
             status,
         });
-
+        
         const data = await connectionRequest.save();
+        
+        const emailRes = await sendEmail.run("A new friend request from" + " " +
+            req.user.firstName, req.user.firstName + " " + "is" + " " + status + " " + "in" + " " + toUser.firstName);
+        
+        console.log(JSON.stringify(emailRes, null, 2));
+        
+
         res.json({
-            message: req.user.firstName + "is" + status + "in" + toUser.firstName,
+            message: req.user.firstName + "" + "is" + "" + status + "" + "in" + "" + toUser.firstName,
             data,
         });
     }
