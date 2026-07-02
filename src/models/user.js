@@ -47,6 +47,13 @@ const userSchema = mongoose.Schema({
                 throw new ErrorEvent("Gender not valid");
         },
     },
+    isPremium: {
+        type: Boolean,
+        default: false,
+    },
+    membershipType: {
+        type: String,
+    },
     photourl: {
         type: String,
         //default: "https:heeloo",
