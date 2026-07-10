@@ -65,13 +65,13 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
       await payment.save();
 
       //update the user as premium user
-      const user = await User.findOne({_id: payment.userId});
+     
+      //return success response
+      if(req.body.event == "payment.captured"){
+       const user = await User.findOne({_id: payment.userId});
       user.isPremium = true;
       user.membershipType = payment.notes.membershipType;
       await user.save();
-      //return success response
-      if(req.body.event == "payment.captured"){
-
       }
       if(req.body.event == "payment.failed"){
          
